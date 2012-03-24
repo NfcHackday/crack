@@ -39,7 +39,7 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
         if (!authenticated) {
         	Intent profileScreen = new Intent(this,AnonymousActivity.class);
         	startActivity(profileScreen);
-        	
+        	this.finish();
         	return;
         }
         
