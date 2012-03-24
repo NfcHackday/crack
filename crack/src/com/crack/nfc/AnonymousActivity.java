@@ -22,9 +22,12 @@ public class AnonymousActivity extends Activity {
 			
 			public void onClick(View arg0) {
 				Toast.makeText(getApplicationContext(), "Sign in", Toast.LENGTH_SHORT).show();
+				
 				// Orene's code here....
 				
-	        	Intent profileScreen = new Intent(AnonymousActivity.this,ProfileActivity.class);
+				CrackActivity.authenticated = true;
+				
+	        	Intent profileScreen = new Intent(AnonymousActivity.this,CrackActivity.class);
 	        	startActivity(profileScreen);
 			}
 		});
