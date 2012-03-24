@@ -15,6 +15,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.text.format.Time;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.main);
         mInfoText = (TextView) findViewById(R.id.textView);
         
@@ -39,6 +42,16 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
         mNfcAdapter.setNdefPushMessageCallback(this, this);
         // Register callback to listen for message-sent success
         mNfcAdapter.setOnNdefPushCompleteCallback(this, this);
+
+        Button buttonFacebookSignin = (Button) findViewById(R.id.facebookSignin);
+        
+        buttonFacebookSignin.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+				Toast.makeText(getApplicationContext(), "Sign in", Toast.LENGTH_SHORT).show();
+				// Orene's code here....
+			}
+		});
 
     }
 
@@ -125,9 +138,9 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
         // only one message sent during the beam
         NdefMessage msg = (NdefMessage) rawMsgs[0];
         // record 0 contains the MIME type, record 1 is the AAR, if present
-        mInfoText.setText(new String(msg.getRecords()[0].getPayload()));
-        //ztodo
+        mInfoText.setText(mInfoText.getText() + "\n" + new String(msg.getRecords()[0].getPayload()));
     }
-
+        
+        
 
 }
