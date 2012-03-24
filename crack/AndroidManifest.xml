@@ -30,6 +30,10 @@
             android:name=".AnonymousActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name=".FriendCanvasActivity"
+            android:label="@string/app_name" >
+        </activity>
     </application>
 
 </manifest>

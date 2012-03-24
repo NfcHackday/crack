@@ -19,6 +19,7 @@ import android.os.Parcelable;
 import android.text.format.Time;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,21 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
         }
         
         setContentView(R.layout.profile);
+        
+        // Temp image button for launching friend canvas
+        ImageButton ib = (ImageButton) findViewById(R.id.imageButton1);
+        
+        ib.setOnClickListener(new View.OnClickListener() {
+			
+			public void onClick(View arg0) {
+
+	        	Intent friendCanvas = new Intent(CrackActivity.this,FriendCanvasActivity.class);
+	        	startActivity(friendCanvas);
+				
+			}
+		});
+        // END temp code
+        
         mInfoText = (TextView) findViewById(R.id.textView);
         
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
