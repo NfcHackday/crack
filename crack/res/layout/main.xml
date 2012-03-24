@@ -7,6 +7,13 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="We love crack" />
+        android:gravity="center_horizontal|center"
+        android:text="share crack with your friends" android:minLines="3"/>
+
+    <Button
+        android:id="@+id/facebookSignin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sign in with Facebook" android:layout_marginLeft="10dp" android:layout_marginRight="10dp"/>
 
 </LinearLayout>
