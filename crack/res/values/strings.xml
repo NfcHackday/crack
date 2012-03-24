@@ -2,6 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, CrackActivity!</string>
-    <string name="app_name">Crack</string>
+    <string name="app_name">Crack Friends</string>
+    <string name="profile_title">My Crack</string>
 
 </resources>
