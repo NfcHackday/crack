@@ -4,14 +4,12 @@ import java.nio.charset.Charset;
 
 import android.app.Activity;
 import android.content.Intent;
-
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcAdapter.OnNdefPushCompleteCallback;
 import android.nfc.NfcEvent;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,12 +22,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class CrackActivity extends Activity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback {
+	private final static String textLump = "Twas brillig, and the slithy toves Did gyre and gimble in the wabe: All mimsy were the borogoves, And the mome raths outgrabe.  Beware the Jabberwock, my son!  The jaws that bite, the claws that catch!  Beware the Jubjub bird, and shun The frumious Bandersnatch! He took his vorpal sword in hand: Long time the manxome foe he sought -- So rested he by the Tumtum tree, And stood awhile in thought.  And, as in uffish thought he stood, The Jabberwock, with eyes of flame, Came whiffling through the tulgey wood, And burbled as it came!  One, two! One, two! And through and through The vorpal blade went snicker-snack!  He left it dead, and with its head He went galumphing back.  And, has thou slain the Jabberwock?  Come to my arms, my beamish boy!  O frabjous day! Callooh! Callay!' He chortled in his joy.  `Twas brillig, and the slithy toves Did gyre and gimble in the wabe; All mimsy were the borogoves, And the mome raths outgrabe.";
     
 	protected static boolean authenticated = false;
 	
 	NfcAdapter mNfcAdapter;
     private static final int MESSAGE_SENT = 1;
-    TextView mInfoText;
+    String contactLog = "";
 
 	
 	/** Called when the activity is first created. */
@@ -60,11 +59,11 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 		});
         // END temp code
         
-        mInfoText = (TextView) findViewById(R.id.textView);
+        //mInfoText = (TextView) findViewById(R.id.textView);
         
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
-            mInfoText.setText("NFC is not available on this device.");
+            Toast.makeText(getApplicationContext(), "NFC is not available on this device.", Toast.LENGTH_LONG).show();
         }
         // Register callback to set NDEF message
         mNfcAdapter.setNdefPushMessageCallback(this, this);
@@ -78,9 +77,7 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
      */
 //    @Override
     public NdefMessage createNdefMessage(NfcEvent event) {
-        Time time = new Time();
-        time.setToNow();
-        String text = ("Test record at " + time.format("%H:%M:%S"));
+        String text = messageToBeSent();
         NdefMessage msg = new NdefMessage(
                 new NdefRecord[] { createMimeRecord(
                         "application/com.crack.nfc", text.getBytes())
@@ -143,8 +140,13 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 
     @Override
     public void onNewIntent(Intent intent) {
+    	super.onResume();
+        //mNfcAdapter.enableForegroundDispatch(this, pendingIntent, intentFiltersArray, techListsArray);
+
         // onResume gets called after this to handle the intent
         setIntent(intent);
+//        Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
     }
 
     /**
@@ -156,9 +158,30 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
         // only one message sent during the beam
         NdefMessage msg = (NdefMessage) rawMsgs[0];
         // record 0 contains the MIME type, record 1 is the AAR, if present
-        mInfoText.setText(mInfoText.getText() + "\n" + new String(msg.getRecords()[0].getPayload()));
+        String message = new String(msg.getRecords()[0].getPayload());
+        handleMessageReceived(message);
     }
-        
-        
+
+    
+    
+    
+    // ----------------------------------------------
+    // Nathan/Oren implement here
+    
+    // Called when NFC message is received
+	private void handleMessageReceived(String message) {
+        Toast.makeText(getApplicationContext(), "Received " +  message, Toast.LENGTH_LONG).show();
+	}        
+	
+	// Called to get NFC message for sending
+	// Maximum message size is 32K
+	private String messageToBeSent() {
+		Time time = new Time();
+        time.setToNow();
+        String text = (time.format("%H:%M:%S") + " " + textLump);
+		return text;
+	}
+
+       
 
 }
