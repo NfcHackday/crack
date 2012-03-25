@@ -12,10 +12,15 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 import android.content.Context;
-
+/**
+ * @author Anton
+ * 
+ * Persists friends across application launches. This class is observable, allowing
+ * observers to be notified when there is a change in friends.
+ */
 public class Repository extends Observable {
 
-	public ArrayList<Friend> friends;
+	private ArrayList<Friend> friends;
 	private static Repository instance;
 	private String FILENAME = "friends.dat";
 	private Context context;
@@ -26,6 +31,15 @@ public class Repository extends Observable {
 		return instance;
 	}
 
+	/**
+	 * Adds a friend object to the repo. If this friends 
+	 * already exists in the repository (matched on e-mail) 
+	 * it is updated and staleness set to 0.
+	 * 
+	 * Observers are notified.
+	 * 
+	 * @param newFriend a friend object to be added to the repo
+	 */	
 	public void addFriend(Friend newFriend) {
 		int idx = -1;
 		for (int i=0; i< friends.size(); i++) {
@@ -45,8 +59,6 @@ public class Repository extends Observable {
 			existingFriend.setStaleness(0);
 		}
 		save();
-		setChanged();
-		notifyObservers();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -80,6 +92,8 @@ public class Repository extends Observable {
 			FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);		
 			fos.write(serialize(friends).getBytes());
 			fos.close();
+			setChanged();
+			notifyObservers();
 		} catch (Exception e) {	}		
 	}
 
@@ -106,6 +120,22 @@ public class Repository extends Observable {
 			bytes[bi++] = (byte) s.charAt(ci);
 		}
 		return new ObjectInputStream(new ByteArrayInputStream(bytes)).readObject();
+	}
+	
+	/**
+	 * Increases the staleness of all friends by 1.
+	 * 
+	 * Observers are notified.
+	 */
+	public void age() {
+		for (Friend f : getFriends()) {
+			f.setStaleness(f.getStaleness() + 1);
+		}
+		save();
+	}
+	
+	public ArrayList<Friend> getFriends() {
+		return friends;
 	}
 
 }
