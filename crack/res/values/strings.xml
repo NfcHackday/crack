@@ -4,5 +4,6 @@
     <string name="hello">Hello World, CrackActivity!</string>
     <string name="app_name">keepintouch</string>
     <string name="profile_title">My Crack</string>
+    <string name="wallpaper">My Friends</string>
 
 </resources>
