@@ -70,7 +70,7 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 			//new DownloadImageTask().execute(f);
 			
 		}
-        
+
         setContentView(R.layout.profile);
         
         // Temp image button for launching friend canvas
