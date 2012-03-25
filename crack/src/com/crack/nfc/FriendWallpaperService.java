@@ -235,7 +235,7 @@ public class FriendWallpaperService extends WallpaperService {
 					}
 				} else {
 					// Calculate staleness over 1 hour
-					int timeoutSeconds = 180;
+					int timeoutSeconds = 60;
 					Long staleness = System.currentTimeMillis() - f.getStaleness();
 					double staleSeconds = (staleness/1000) ;
 					double transparency = 255-(255 * (staleSeconds/timeoutSeconds)) ;
@@ -247,6 +247,9 @@ public class FriendWallpaperService extends WallpaperService {
 					
 					mPaint.setAlpha((int)transparency);
 					
+					Paint newP = new Paint();
+					newP.setARGB(255, 0, 0, 0);
+					c.drawRect(r, newP);
 					c.drawBitmap(fImage, null, r, mPaint);
 					Log.d("Drawing",transparency+", "+String.valueOf(mPaint.getAlpha()));
 				}
