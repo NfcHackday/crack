@@ -1,19 +1,14 @@
 package com.crack.storage;
 
-
 import java.io.Serializable;
 
-import android.graphics.Bitmap;
-
 public class Friend implements Serializable {
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 5995064843255722178L;
 	
 	private String email;
 	private String name;
-	private Bitmap image;
+	private String imageUrl;
 	private int staleness;
 	
 	public Friend() {}
@@ -34,12 +29,12 @@ public class Friend implements Serializable {
 		this.name = name;
 	}
 
-	public Bitmap getImage() {
-		return image;
+	public String getImageUrl() {
+		return imageUrl;
 	}
 
-	public void setImage(Bitmap image) {
-		this.image = image;
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public void setStaleness(int staleness) {

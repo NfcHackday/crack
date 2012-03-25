@@ -1,5 +1,6 @@
 package com.crack.nfc;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 
 import android.app.Activity;
@@ -14,16 +15,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.text.format.Time;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.crack.storage.Friend;
+import com.crack.storage.Repository;
 
 public class CrackActivity extends Activity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback {
 	private final static String textLump = "Twas brillig, and the slithy toves Did gyre and gimble in the wabe: All mimsy were the borogoves, And the mome raths outgrabe.  Beware the Jabberwock, my son!  The jaws that bite, the claws that catch!  Beware the Jubjub bird, and shun The frumious Bandersnatch! He took his vorpal sword in hand: Long time the manxome foe he sought -- So rested he by the Tumtum tree, And stood awhile in thought.  And, as in uffish thought he stood, The Jabberwock, with eyes of flame, Came whiffling through the tulgey wood, And burbled as it came!  One, two! One, two! And through and through The vorpal blade went snicker-snack!  He left it dead, and with its head He went galumphing back.  And, has thou slain the Jabberwock?  Come to my arms, my beamish boy!  O frabjous day! Callooh! Callay!' He chortled in his joy.  `Twas brillig, and the slithy toves Did gyre and gimble in the wabe; All mimsy were the borogoves, And the mome raths outgrabe.";
     
+	private Repository repo = Repository.getInstance(this);
+	
 	protected static boolean authenticated = false;
 	
 	NfcAdapter mNfcAdapter;
@@ -35,7 +38,7 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+                
         if (!authenticated) {
         	Intent profileScreen = new Intent(this,AnonymousActivity.class);
         	startActivity(profileScreen);
@@ -51,11 +54,10 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
         ib.setOnClickListener(new View.OnClickListener() {
 			
 			public void onClick(View arg0) {
-
 	        	Intent friendCanvas = new Intent(CrackActivity.this,FriendCanvasActivity.class);
-	        	startActivity(friendCanvas);
-				
+	        	startActivity(friendCanvas);				
 			}
+			
 		});
         // END temp code
         
@@ -161,27 +163,38 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
         String message = new String(msg.getRecords()[0].getPayload());
         handleMessageReceived(message);
     }
-
-    
-    
     
     // ----------------------------------------------
     // Nathan/Oren implement here
     
     // Called when NFC message is received
 	private void handleMessageReceived(String message) {
+		
+		try {
+			Friend f = (Friend)Repository.deserialize(message);
+			repo.addFriend(f);
+			Toast.makeText(getApplicationContext(), "Friend received: " +  f.getName(), Toast.LENGTH_LONG).show();
+			return;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         Toast.makeText(getApplicationContext(), "Received " +  message, Toast.LENGTH_LONG).show();
 	}        
 	
 	// Called to get NFC message for sending
 	// Maximum message size is 32K
-	private String messageToBeSent() {
-		Time time = new Time();
-        time.setToNow();
-        String text = (time.format("%H:%M:%S") + " " + textLump);
-		return text;
+	private String messageToBeSent() {		
+		try {
+			return Repository.serialize(repo.getMe());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
-
-       
 
 }

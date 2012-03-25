@@ -19,10 +19,14 @@ import android.content.Context;
  * observers to be notified when there is a change in friends.
  */
 public class Repository extends Observable {
-
+	
+	private Friend me;
+	private String ME_FILENAME = "me.dat";
+	
 	private ArrayList<Friend> friends;
-	private static Repository instance;
 	private String FILENAME = "friends.dat";
+	
+	private static Repository instance;
 	private Context context;
 	
 	public static Repository getInstance(Context context) {
@@ -31,6 +35,12 @@ public class Repository extends Observable {
 		return instance;
 	}
 
+	private Repository(Context context) {
+		this.context = context;
+		update();
+		updateMe();
+	}
+	
 	/**
 	 * Adds a friend object to the repo. If this friends 
 	 * already exists in the repository (matched on e-mail) 
@@ -54,7 +64,7 @@ public class Repository extends Observable {
 		}
 		else {
 			Friend existingFriend = friends.get(idx);
-			existingFriend.setImage(newFriend.getImage());
+			existingFriend.setImageUrl(newFriend.getImageUrl());
 			existingFriend.setName(newFriend.getName());
 			existingFriend.setStaleness(0);
 		}
@@ -82,11 +92,23 @@ public class Repository extends Observable {
 		}
 	}
 	
-	private Repository(Context context) {
-		this.context = context;
-		update();
+	private void updateMe() {
+		try {
+			FileInputStream fis = context.openFileInput(ME_FILENAME);
+			byte[] b = new byte[fis.available()];
+			fis.read(b);
+			String s = new String(b);
+			if ("".equals(s)) {
+				me = null;
+			}
+			else {
+				me = (Friend)deserialize(s);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-
+	
 	private void save() {
 		try {			
 			FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);		
@@ -94,6 +116,14 @@ public class Repository extends Observable {
 			fos.close();
 			setChanged();
 			notifyObservers();
+		} catch (Exception e) {	}		
+	}
+	
+	private void saveMe() {
+		try {			
+			FileOutputStream fos = context.openFileOutput(ME_FILENAME, Context.MODE_PRIVATE);		
+			fos.write(serialize(me).getBytes());
+			fos.close();
 		} catch (Exception e) {	}		
 	}
 
@@ -136,6 +166,15 @@ public class Repository extends Observable {
 	
 	public ArrayList<Friend> getFriends() {
 		return friends;
+	}
+	
+	public void setMe(Friend me) {
+		this.me = me;
+		saveMe();
+	}
+	
+	public Friend getMe() {
+		return me;
 	}
 
 }
