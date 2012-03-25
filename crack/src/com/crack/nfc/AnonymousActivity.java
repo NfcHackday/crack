@@ -115,7 +115,7 @@ public class AnonymousActivity extends Activity {
                 JSONObject json = Util.parseJson(response);
                 Friend me = new Friend();
                 me.setEmail(json.getString("email"));
-                me.setImageUrl("http://graph.facebook.com/" + json.getString("id")+ "/picture?type=square");
+                me.setImageUrl("http://graph.facebook.com/" + json.getString("id")+ "/picture?type=large");
                 me.setName(json.getString("name"));
                 Repository.getInstance(AnonymousActivity.this).setMe(me);
                 Log.d("oren", String.valueOf(me));

@@ -1,11 +1,10 @@
 package com.crack.nfc;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import android.widget.TextView;
 import com.crack.storage.Friend;
 import com.crack.storage.Repository;
 
-public class FriendsListAdapter extends BaseAdapter {
+public class FriendsListAdapter extends BaseAdapter implements Observer {
 
 	private ArrayList<Friend> friends;
 	private Context context;
@@ -24,6 +23,7 @@ public class FriendsListAdapter extends BaseAdapter {
 	public FriendsListAdapter(Context context) {
 		this.context = context;
 		friends = Repository.getInstance(context).getFriends();
+		Repository.getInstance(context).addObserver(this);
 	}
 
 	//@Override
@@ -57,22 +57,14 @@ public class FriendsListAdapter extends BaseAdapter {
 		txtName.setText(f.getName());
 		txtLastSeen.setText(((System.currentTimeMillis()-f.getStaleness())/1000)/60 + " mins ago");
 		txtEmail.setText(f.getEmail());
-
-		// need to set the image
-		try {
-			//URL myUrl = new URL(f.getImageUrl());
-			//InputStream inputStream = (InputStream) myUrl.getContent();
-			//Drawable drawable = Drawable.createFromStream(inputStream, null);
-			//iv.setImageDrawable(grabImageFromUrl(f.getImageUrl()));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+		//iv.setImageDrawable(grabImageFromUrl(f.getImageUrl()));
 		return arg1;
 	}
 
-	private Drawable grabImageFromUrl(String url) throws Exception {
-		return Drawable.createFromStream((InputStream) new URL(url).getContent(), "src");
+	//@Override
+	public void update(Observable arg0, Object arg1) {
+		friends = Repository.getInstance(context).getFriends();
+		this.notifyDataSetChanged();
 	}
 
 }
