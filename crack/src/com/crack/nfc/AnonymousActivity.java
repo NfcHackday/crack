@@ -1,29 +1,38 @@
 package com.crack.nfc;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.test.suitebuilder.annotation.Smoke;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
+import com.crack.storage.Friend;
+import com.crack.storage.Repository;
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.BaseRequestListener;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
+import com.facebook.android.Util;
 
 public class AnonymousActivity extends Activity {
 
 	Facebook facebook = new Facebook("362045603840068");
 	String FILENAME = "AndroidSSO_data";
     private SharedPreferences mPrefs;
+    private static AsyncFacebookRunner mAsyncRunner;
 	
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mAsyncRunner = new AsyncFacebookRunner(facebook);
         mPrefs = getPreferences(MODE_PRIVATE);
         String access_token = mPrefs.getString("access_token", null);
         long expires = mPrefs.getLong("access_expires", 0);
@@ -35,6 +44,9 @@ public class AnonymousActivity extends Activity {
         }
         if(facebook.isSessionValid()) {
         	smokeCrack();
+        	if(Repository.getInstance(AnonymousActivity.this).getMe() == null){
+        		getUserDetails();
+        	}
         	finish();
         }
         else{
@@ -57,8 +69,8 @@ public class AnonymousActivity extends Activity {
                 editor.putString("access_token", facebook.getAccessToken());
                 editor.putLong("access_expires", facebook.getAccessExpires());
                 editor.commit();
+                getUserDetails();
                 smokeCrack();
-                
                 AnonymousActivity.this.finish();
             }
 
@@ -80,11 +92,49 @@ public class AnonymousActivity extends Activity {
     	
 	}
 	
+	protected void getUserDetails() {
+        mAsyncRunner.request("me", new Bundle(), new graphApiRequestListener());
+	}
+
 	@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         facebook.authorizeCallback(requestCode, resultCode, data);
     }
+	
+	/*
+     * Callback after a given Graph API request is executed Get the response and
+     * show it.
+     */
+    public class graphApiRequestListener extends BaseRequestListener {
+
+        @Override
+        public void onComplete(final String response, final Object state) {
+            try {
+                JSONObject json = Util.parseJson(response);
+                Friend me = new Friend();
+                me.setEmail(json.getString("email"));
+                me.setImageUrl("http://graph.facebook.com/" + json.getString("id")+ "/picture?type=square");
+                me.setName(json.getString("name"));
+                Repository.getInstance(AnonymousActivity.this).setMe(me);
+                Log.d("oren", String.valueOf(me));
+                Log.d("oren", json.toString(2));
+            } catch (JSONException e) {
+            	Log.d("oren",e.getMessage());
+                e.printStackTrace();
+            } catch (FacebookError e) {
+            	Log.d("oren",e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        public void onFacebookError(FacebookError error) {
+            Log.e("oren", "onFacebookError");
+        }
+
+    }
+    
+    
 	
 }
