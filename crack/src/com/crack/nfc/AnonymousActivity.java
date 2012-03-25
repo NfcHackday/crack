@@ -109,7 +109,7 @@ public class AnonymousActivity extends Activity {
      */
     public class graphApiRequestListener extends BaseRequestListener {
 
-        @Override
+        //@Override
         public void onComplete(final String response, final Object state) {
             try {
                 JSONObject json = Util.parseJson(response);
