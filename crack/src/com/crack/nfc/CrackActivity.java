@@ -17,6 +17,7 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.crack.storage.Friend;
@@ -25,7 +26,7 @@ import com.crack.storage.Repository;
 public class CrackActivity extends Activity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback {
 	private final static String textLump = "Twas brillig, and the slithy toves Did gyre and gimble in the wabe: All mimsy were the borogoves, And the mome raths outgrabe.  Beware the Jabberwock, my son!  The jaws that bite, the claws that catch!  Beware the Jubjub bird, and shun The frumious Bandersnatch! He took his vorpal sword in hand: Long time the manxome foe he sought -- So rested he by the Tumtum tree, And stood awhile in thought.  And, as in uffish thought he stood, The Jabberwock, with eyes of flame, Came whiffling through the tulgey wood, And burbled as it came!  One, two! One, two! And through and through The vorpal blade went snicker-snack!  He left it dead, and with its head He went galumphing back.  And, has thou slain the Jabberwock?  Come to my arms, my beamish boy!  O frabjous day! Callooh! Callay!' He chortled in his joy.  `Twas brillig, and the slithy toves Did gyre and gimble in the wabe; All mimsy were the borogoves, And the mome raths outgrabe.";
     
-	private Repository repo = Repository.getInstance(this);
+	private Repository repo;
 	
 	protected static boolean authenticated = false;
 	
@@ -38,7 +39,7 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-                
+        repo = Repository.getInstance(this);
         if (!authenticated) {
         	Intent profileScreen = new Intent(this,AnonymousActivity.class);
         	startActivity(profileScreen);
@@ -46,8 +47,18 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
         	return;
         }
         
-        setContentView(R.layout.profile);
+        for (int i=0; i<10; i++){
+        	Friend f = new Friend();
+        	f.setEmail("anton" + i + "@gmail.com");
+        	f.setName("anton" + i);
+        	f.setImageUrl("http://www.corbijn.co.uk/images/photo_selfim_anton_h_2.jpg");
+        	repo.addFriend(f);
+        }
         
+        setContentView(R.layout.profile);
+    	
+    	ListView lv = (ListView)findViewById(R.id.listView1);
+    	lv.setAdapter(new FriendsListAdapter(this));
         // Temp image button for launching friend canvas
         ImageButton ib = (ImageButton) findViewById(R.id.imageButton1);
         
