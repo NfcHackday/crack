@@ -1,6 +1,14 @@
 package com.crack.storage;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import com.crack.nfc.CrackActivity;
+
+import android.graphics.Bitmap;
 
 public class Friend implements Serializable {
 	
@@ -34,7 +42,7 @@ public class Friend implements Serializable {
 	}
 
 	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
+		this.imageUrl = imageUrl;		
 	}
 
 	public void setStaleness(int staleness) {

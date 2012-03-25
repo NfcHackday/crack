@@ -1,76 +1,85 @@
 package com.crack.nfc;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Vector;
+
+import com.crack.storage.Friend;
+import com.crack.storage.Repository;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 public class FriendCanvasActivity extends Activity {
+
+	private static HashMap<Friend,Bitmap> images = new HashMap<Friend, Bitmap>();
+	private static HashMap<Friend,ImageDrawingData> imageData = new HashMap<Friend, FriendCanvasActivity.ImageDrawingData>();
 	
-	//static Friend f;
+	private class ImageDrawingData {
+		
+		private Friend friend;
+		private Rect r;
+		private Paint p;
+		private Canvas c;
+		private View v;
+	}
+	
+	public class DownloadImageTask extends AsyncTask<ImageDrawingData, Integer, Long> {
+	     
+		 protected Long doInBackground(ImageDrawingData... data) {
+	 	    try {
+		        URL url = new URL(data[0].friend.getImageUrl());
+		        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		        connection.setDoInput(true);
+		        connection.connect();
+		        InputStream input = connection.getInputStream();
+		        Bitmap bitmap = BitmapFactory.decodeStream(input);
+		        images.put(data[0].friend, bitmap);
+		        data[0].v.postInvalidate();
+		        Log.d("Done", "Loading image");
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		        return null;
+		    }
+			return null;
+	 	    
+	     }
+
+	 }
 	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-    
-        
-//        f = new Friend();
-//        f.lastCracked = 100;
-//        f.photo = BitmapFactory.decodeResource(getResources(), R.drawable.anton);
-//        f.name = "anton";
-        
-        
+
         setContentView(new FriendCanvas(getApplicationContext()));
       
     }
-
-    public static class Friend {
-    	public int lastCracked;
-    	public int photoId;
-    	public String name;
-    	
-    }
-    
-    public static class FriendProvider {
-    	Context context;
-    	public FriendProvider(Context c) {
-    		context = c;
-    	}
-    	
-    	public Vector<Friend> getFriends() {
-    		Vector<Friend> friends = new Vector<Friend>();
-    		
-    		for (int i=0; i<20; i++) {
-    			
-    			Friend f = new Friend();
-    	        f.lastCracked = i;
-    	        f.photoId = R.drawable.anton;
-    	        f.name = "anton";
-    			friends.add(f);	
-    		}
-    		return friends;    		
-    	}
-    	
-    }
     
     public class FriendCanvas extends View {
-    	Vector<Friend> friends;
+    	ArrayList<Friend> friends;
     	
 		public FriendCanvas(Context context) {
 			super(context);
-			FriendProvider fp = new FriendProvider(context);
-			friends = fp.getFriends();
+			friends = Repository.getInstance(context).getFriends();
 			
 			this.setOnTouchListener(new View.OnTouchListener() {
 				
@@ -80,12 +89,14 @@ public class FriendCanvasActivity extends Activity {
 					
 					int touchRow = (int) Math.ceil(touchEvent.getY()/imageSize);
 					int touchColumn = (int) Math.ceil(touchEvent.getX()/imageSize);
-
+					
 					Toast.makeText(getApplicationContext(), "Touched item "+touchRow*touchColumn, Toast.LENGTH_SHORT).show();
 					
 					return false;
 				}
 			});
+			
+			// Start the data loading
 		}
     	
 		@Override
@@ -108,8 +119,10 @@ public class FriendCanvasActivity extends Activity {
 			
 			for (Friend f : friends) {
 				
-				int i = (255 * f.lastCracked) / 100 ;
-				p.setAlpha(i);
+
+				
+				int i = (255 * f.getStaleness()) / 100 ;
+				//p.setAlpha(i);
 				
 				/* From bottom
 				currentX -= imageSize;
@@ -122,9 +135,22 @@ public class FriendCanvasActivity extends Activity {
 				
 				Rect r = new Rect( currentX,currentY, currentX+imageSize,currentY+ imageSize);
 				
+				ImageDrawingData data = new ImageDrawingData();
 				
-				//canvas.drawBitmap(f.photo, currentX, currentY, p);
-				canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), f.photoId), null, r,  p);
+				data.friend = f;
+				data.r = r;
+				data.p = p;
+				data.c = canvas;
+				data.v = this;
+				
+				imageData.put(f, data);
+				
+				Bitmap fImage = images.get(f);
+				if (fImage == null) {
+					new DownloadImageTask().execute(data);
+				} else {
+					canvas.drawBitmap(fImage, null, r, p);
+				}
 				
 				currentX += imageSize;
 				if (currentX > (this.getWidth()-imageSize)) {

@@ -1,22 +1,33 @@
 package com.crack.nfc;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcAdapter.OnNdefPushCompleteCallback;
 import android.nfc.NfcEvent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.crack.storage.Friend;
@@ -25,26 +36,40 @@ import com.crack.storage.Repository;
 public class CrackActivity extends Activity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback {
 	private final static String textLump = "Twas brillig, and the slithy toves Did gyre and gimble in the wabe: All mimsy were the borogoves, And the mome raths outgrabe.  Beware the Jabberwock, my son!  The jaws that bite, the claws that catch!  Beware the Jubjub bird, and shun The frumious Bandersnatch! He took his vorpal sword in hand: Long time the manxome foe he sought -- So rested he by the Tumtum tree, And stood awhile in thought.  And, as in uffish thought he stood, The Jabberwock, with eyes of flame, Came whiffling through the tulgey wood, And burbled as it came!  One, two! One, two! And through and through The vorpal blade went snicker-snack!  He left it dead, and with its head He went galumphing back.  And, has thou slain the Jabberwock?  Come to my arms, my beamish boy!  O frabjous day! Callooh! Callay!' He chortled in his joy.  `Twas brillig, and the slithy toves Did gyre and gimble in the wabe; All mimsy were the borogoves, And the mome raths outgrabe.";
     
-	private Repository repo = Repository.getInstance(this);
+	private Repository repo;
 	
 	protected static boolean authenticated = false;
 	
 	NfcAdapter mNfcAdapter;
     private static final int MESSAGE_SENT = 1;
     String contactLog = "";
-
-	
+    
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-                
+		
         if (!authenticated) {
         	Intent profileScreen = new Intent(this,AnonymousActivity.class);
         	startActivity(profileScreen);
         	this.finish();
         	return;
         }
+        
+        repo = Repository.getInstance(this);  
+        // Create some dummy friends
+		for (int i=0; i<20; i++) {
+			
+			Friend f = new Friend();
+	        f.setStaleness(i);
+	        f.setImageUrl("http://3.bp.blogspot.com/_SYZI7f8KELk/TQoDVn15WbI/AAAAAAAAAAc/xi0qZkqdoh4/s1600/anton.jpg");
+	        f.setName("Anton");
+			f.setEmail("test"+i+"@text.com");
+			repo.addFriend(f);
+			
+			//new DownloadImageTask().execute(f);
+			
+		}
         
         setContentView(R.layout.profile);
         
@@ -61,7 +86,17 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 		});
         // END temp code
         
-        //mInfoText = (TextView) findViewById(R.id.textView);
+        
+        // Add friends to the list
+        
+       // /ListView list = (ListView) findViewById(R.id.listView1);
+        
+        //ArrayList<Friend> friends = repo.getFriends();
+
+       // list.setAdapter(new ArrayAdapter<Friend>(this, R.layout.list_item, friends));
+        
+        
+        // Setup the NFC stuff
         
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
