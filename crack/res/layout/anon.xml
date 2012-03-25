@@ -2,23 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+     >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/toplogo" android:layout_gravity="center_horizontal" android:layout_margin="10dp"/>
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|center"
-        android:minLines="3"
-        android:text="share crack with your friends" />
+        android:minLines="1"
+        android:text="touch me or lose me" android:layout_marginBottom="50dp"/>
 
-    <Button
-        android:id="@+id/facebookSignin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:text="Sign in with Facebook" 
-        android:onClick="fbLogin"/>
+    
+        
+         <ImageButton
+             android:id="@+id/facebookSignin"
+             android:onClick="fbLogin"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:scaleType="fitXY" android:background="@drawable/facebook_button" android:layout_gravity="center_horizontal" />
+    
+          <ImageButton
+             android:id="@+id/imageButton2"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:scaleType="fitXY" android:background="@drawable/linkedin_button" android:layout_gravity="center_horizontal|center" android:layout_marginTop="10dp"/>
 
+         
+         
 </LinearLayout>
