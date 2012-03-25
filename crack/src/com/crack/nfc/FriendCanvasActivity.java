@@ -120,12 +120,7 @@ public class FriendCanvasActivity extends Activity {
 			for (Friend f : friends) {
 				
 
-				// Calculate staleness over 1 hour
-				Long staleness = System.currentTimeMillis() - f.getStaleness();
-				int staleMins = (int) (staleness/1000/60) ;
-				int transparency = (255 * (staleMins/60)) ;
-				
-				p.setAlpha(255-transparency);
+
 				
 				/* From bottom
 				currentX -= imageSize;
@@ -157,8 +152,15 @@ public class FriendCanvasActivity extends Activity {
 						new DownloadImageTask().execute(data);
 					}
 				} else {
+					// Calculate staleness over 1 hour
+					Long staleness = System.currentTimeMillis() - f.getStaleness();
+					double staleMins = (staleness/1000/60) ;
+					double transparency = 255-(255 * (staleMins/60)) ;
+					
+					p.setAlpha((int)transparency);
+					
 					canvas.drawBitmap(fImage, null, r, p);
-					Log.d("Drawing",String.valueOf(p.getAlpha()));
+					Log.d("Drawing",transparency+", "+String.valueOf(p.getAlpha()));
 				}
 				
 				currentX += imageSize;
