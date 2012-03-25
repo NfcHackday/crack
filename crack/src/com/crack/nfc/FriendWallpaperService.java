@@ -197,7 +197,7 @@ public class FriendWallpaperService extends WallpaperService {
             // Reschedule the next redraw
             mHandler.removeCallbacks(mDrawCube);
             if (mVisible) {
-                mHandler.postDelayed(mDrawCube, 5000);
+                mHandler.postDelayed(mDrawCube, 2000);
             }
         }
 
