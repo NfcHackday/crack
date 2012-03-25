@@ -57,8 +57,6 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 //		}
 
         setContentView(R.layout.profile);
-        
-        setContentView(R.layout.profile);
     	
     	ListView lv = (ListView)findViewById(R.id.listView1);
     	lv.setAdapter(new FriendsListAdapter(this));
