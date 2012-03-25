@@ -29,6 +29,10 @@ public class AnonymousActivity extends Activity {
 				
 	        	Intent profileScreen = new Intent(AnonymousActivity.this,CrackActivity.class);
 	        	startActivity(profileScreen);
+	        	
+	        	AnonymousActivity.this.finish();
+	        	
+	        	return;
 			}
 		});
         
