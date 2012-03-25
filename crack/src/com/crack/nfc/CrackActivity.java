@@ -48,7 +48,7 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-		
+	
         repo = Repository.getInstance(this);  
         // Create some dummy friends
 //		for (int i=0; i<20; i++) {
@@ -66,6 +66,10 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 
         setContentView(R.layout.profile);
         
+        setContentView(R.layout.profile);
+    	
+    	ListView lv = (ListView)findViewById(R.id.listView1);
+    	lv.setAdapter(new FriendsListAdapter(this));
         // Temp image button for launching friend canvas
         ImageButton ib = (ImageButton) findViewById(R.id.imageButton1);
         
