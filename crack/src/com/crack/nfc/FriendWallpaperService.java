@@ -258,6 +258,8 @@ public class FriendWallpaperService extends WallpaperService {
 				}
 				
 			}
+			
+			c.restore();
         }
 
     }
