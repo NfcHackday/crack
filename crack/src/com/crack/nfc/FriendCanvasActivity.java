@@ -32,6 +32,7 @@ public class FriendCanvasActivity extends Activity {
 
 	private static HashMap<Friend,Bitmap> images = new HashMap<Friend, Bitmap>();
 	private static HashMap<Friend,ImageDrawingData> imageData = new HashMap<Friend, FriendCanvasActivity.ImageDrawingData>();
+	private static ArrayList<Friend> friends;
 	
 	private class ImageDrawingData {
 		
@@ -75,7 +76,6 @@ public class FriendCanvasActivity extends Activity {
     }
     
     public class FriendCanvas extends View {
-    	ArrayList<Friend> friends;
     	
 		public FriendCanvas(Context context) {
 			super(context);
@@ -90,7 +90,16 @@ public class FriendCanvasActivity extends Activity {
 					int touchRow = (int) Math.ceil(touchEvent.getY()/imageSize);
 					int touchColumn = (int) Math.ceil(touchEvent.getX()/imageSize);
 					
-					Toast.makeText(getApplicationContext(), "Touched item "+touchRow*touchColumn, Toast.LENGTH_SHORT).show();
+					int touchItem = ((touchRow-1)*5)+touchColumn;
+					
+					Friend touchedFriend = (Friend) friends.get(touchItem-1);
+					
+					Log.d("Touched Friend",String.valueOf(touchItem));
+					
+					Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
+					emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {touchedFriend.getEmail()});
+					emailIntent.setType("text/plain");
+					startActivity(Intent.createChooser(emailIntent, "It's been too long! Let's meet up on Friday."));
 					
 					return false;
 				}
@@ -119,17 +128,6 @@ public class FriendCanvasActivity extends Activity {
 			
 			for (Friend f : friends) {
 				
-
-
-				
-				/* From bottom
-				currentX -= imageSize;
-				
-				if (currentX < 0) {
-					currentX = this.getWidth();
-					currentY -= imageSize ;
-				}
-				*/
 				
 				Rect r = new Rect( currentX,currentY, currentX+imageSize,currentY+ imageSize);
 				
