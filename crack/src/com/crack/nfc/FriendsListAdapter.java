@@ -26,22 +26,22 @@ public class FriendsListAdapter extends BaseAdapter implements Observer {
 		Repository.getInstance(context).addObserver(this);
 	}
 
-	@Override
+	//@Override
 	public int getCount() {
 		return friends.size();
 	}
 
-	@Override
+	//@Override
 	public Object getItem(int arg0) {
 		return friends.get(arg0);
 	}
 
-	@Override
+	//@Override
 	public long getItemId(int arg0) {
 		return arg0;
 	}
 
-	@Override
+	//@Override
 	public View getView(int arg0, View arg1, ViewGroup arg2) {
 		if (arg1 == null) {
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -55,7 +55,7 @@ public class FriendsListAdapter extends BaseAdapter implements Observer {
 		TextView txtEmail = (TextView) arg1.findViewById(R.id.txtEmail);
 
 		txtName.setText(f.getName());
-		txtLastSeen.setText(f.getStaleness() + " days ago");
+		txtLastSeen.setText(((System.currentTimeMillis()-f.getStaleness())/1000)/60 + " mins ago");
 		txtEmail.setText(f.getEmail());
 		//iv.setImageDrawable(grabImageFromUrl(f.getImageUrl()));
 		return arg1;

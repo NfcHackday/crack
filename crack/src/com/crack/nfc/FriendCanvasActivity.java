@@ -106,12 +106,12 @@ public class FriendCanvasActivity extends Activity {
 			
 			int imageSize = this.getWidth()/5;
 			
-			Paint p = new Paint();
-			
 			/* Start at bottom right
 			int currentY = this.getHeight()-imageSize;
 			int currentX = this.getWidth();
 			*/
+			
+			Paint p = new Paint();
 			
 			// Start at top left
 			int currentY = 0;
@@ -120,9 +120,7 @@ public class FriendCanvasActivity extends Activity {
 			for (Friend f : friends) {
 				
 
-				
-				int i = (255 * f.getStaleness()) / 100 ;
-				//p.setAlpha(i);
+
 				
 				/* From bottom
 				currentX -= imageSize;
@@ -147,9 +145,22 @@ public class FriendCanvasActivity extends Activity {
 				
 				Bitmap fImage = images.get(f);
 				if (fImage == null) {
-					new DownloadImageTask().execute(data);
+					if (!images.containsKey(f)) {
+						// Remember it's already requested....
+						images.put(f,null);
+						// Download asynch
+						new DownloadImageTask().execute(data);
+					}
 				} else {
+					// Calculate staleness over 1 hour
+					Long staleness = System.currentTimeMillis() - f.getStaleness();
+					double staleMins = (staleness/1000/60) ;
+					double transparency = 255-(255 * (staleMins/60)) ;
+					
+					p.setAlpha((int)transparency);
+					
 					canvas.drawBitmap(fImage, null, r, p);
+					Log.d("Drawing",transparency+", "+String.valueOf(p.getAlpha()));
 				}
 				
 				currentX += imageSize;

@@ -17,7 +17,7 @@ public class Friend implements Serializable {
 	private String email;
 	private String name;
 	private String imageUrl;
-	private int staleness;
+	private String staleness;
 	
 	public Friend() {}
 
@@ -45,12 +45,12 @@ public class Friend implements Serializable {
 		this.imageUrl = imageUrl;		
 	}
 
-	public void setStaleness(int staleness) {
-		this.staleness = staleness;
+	public void setStaleness() {
+		this.staleness = String.valueOf(System.currentTimeMillis());
 	}
 
-	public int getStaleness() {
-		return staleness;
+	public long getStaleness() {
+		return Long.parseLong(staleness);
 	}
 	
 }

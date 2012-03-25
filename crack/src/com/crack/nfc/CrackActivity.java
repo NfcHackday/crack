@@ -1,5 +1,7 @@
 package com.crack.nfc;
 
+import java.io.BufferedInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -32,6 +34,7 @@ import android.widget.Toast;
 
 import com.crack.storage.Friend;
 import com.crack.storage.Repository;
+import com.facebook.android.Utility;
 
 public class CrackActivity extends Activity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback {
 	private final static String textLump = "Twas brillig, and the slithy toves Did gyre and gimble in the wabe: All mimsy were the borogoves, And the mome raths outgrabe.  Beware the Jabberwock, my son!  The jaws that bite, the claws that catch!  Beware the Jubjub bird, and shun The frumious Bandersnatch! He took his vorpal sword in hand: Long time the manxome foe he sought -- So rested he by the Tumtum tree, And stood awhile in thought.  And, as in uffish thought he stood, The Jabberwock, with eyes of flame, Came whiffling through the tulgey wood, And burbled as it came!  One, two! One, two! And through and through The vorpal blade went snicker-snack!  He left it dead, and with its head He went galumphing back.  And, has thou slain the Jabberwock?  Come to my arms, my beamish boy!  O frabjous day! Callooh! Callay!' He chortled in his joy.  `Twas brillig, and the slithy toves Did gyre and gimble in the wabe; All mimsy were the borogoves, And the mome raths outgrabe.";
@@ -51,18 +54,18 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 	
         repo = Repository.getInstance(this);  
         // Create some dummy friends
-		for (int i=0; i<20; i++) {
-			
-			Friend f = new Friend();
-	        f.setStaleness(i);
-	        f.setImageUrl("http://3.bp.blogspot.com/_SYZI7f8KELk/TQoDVn15WbI/AAAAAAAAAAc/xi0qZkqdoh4/s1600/anton.jpg");
-	        f.setName("Anton");
-			f.setEmail("test"+i+"@text.com");
-			repo.addFriend(f);
-			
-			//new DownloadImageTask().execute(f);
-			
-		}
+//		for (int i=0; i<20; i++) {
+//			
+//			Friend f = new Friend();
+//	        f.setStaleness();
+//	        f.setImageUrl("http://3.bp.blogspot.com/_SYZI7f8KELk/TQoDVn15WbI/AAAAAAAAAAc/xi0qZkqdoh4/s1600/anton.jpg");
+//	        f.setName("Anton");
+//			f.setEmail("test"+i+"@text.com");
+//			repo.addFriend(f);
+//			
+//			//new DownloadImageTask().execute(f);
+//			
+//		}
 
         setContentView(R.layout.profile);
         
@@ -81,6 +84,7 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 			}
 			
 		});
+        
         // END temp code
         
         
@@ -204,6 +208,7 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 		
 		try {
 			Friend f = (Friend)Repository.deserialize(message);
+			f.setStaleness();
 			repo.addFriend(f);
 			Toast.makeText(getApplicationContext(), "Friend received: " +  f.getName(), Toast.LENGTH_LONG).show();
 			return;
@@ -228,5 +233,4 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 		}
 		return null;
 	}
-
 }
