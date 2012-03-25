@@ -1,40 +1,29 @@
 package com.crack.nfc;
 
-import java.io.BufferedInputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcAdapter.OnNdefPushCompleteCallback;
 import android.nfc.NfcEvent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crack.storage.Friend;
 import com.crack.storage.Repository;
-import com.facebook.android.Utility;
 
 public class CrackActivity extends Activity implements CreateNdefMessageCallback, OnNdefPushCompleteCallback {
 	private final static String textLump = "Twas brillig, and the slithy toves Did gyre and gimble in the wabe: All mimsy were the borogoves, And the mome raths outgrabe.  Beware the Jabberwock, my son!  The jaws that bite, the claws that catch!  Beware the Jubjub bird, and shun The frumious Bandersnatch! He took his vorpal sword in hand: Long time the manxome foe he sought -- So rested he by the Tumtum tree, And stood awhile in thought.  And, as in uffish thought he stood, The Jabberwock, with eyes of flame, Came whiffling through the tulgey wood, And burbled as it came!  One, two! One, two! And through and through The vorpal blade went snicker-snack!  He left it dead, and with its head He went galumphing back.  And, has thou slain the Jabberwock?  Come to my arms, my beamish boy!  O frabjous day! Callooh! Callay!' He chortled in his joy.  `Twas brillig, and the slithy toves Did gyre and gimble in the wabe; All mimsy were the borogoves, And the mome raths outgrabe.";
@@ -84,6 +73,13 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 			}
 			
 		});
+        Friend me = Repository.getInstance(this).getMe();
+        if(me != null ){
+        	
+        	Uri uri = Uri.parse(me.getImageUrl());
+        	((TextView)findViewById(R.id.textView1)).setText(me.getName());
+        	ib.setImageURI(uri);
+        }
         
         // END temp code
         
