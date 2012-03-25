@@ -63,7 +63,7 @@ public class AnonymousActivity extends Activity {
 		//Create the FB login	
 
         facebook.authorize(this, new String[] {"user_about_me", "user_photos", "email", "user_birthday"}, new DialogListener() {
-            @Override
+            //@Override
             public void onComplete(Bundle values) {
                 SharedPreferences.Editor editor = mPrefs.edit();
                 editor.putString("access_token", facebook.getAccessToken());
@@ -75,18 +75,18 @@ public class AnonymousActivity extends Activity {
             }
 
 
-            @Override
+            //@Override
             public void onFacebookError(FacebookError error) {
             	Toast.makeText(AnonymousActivity.this, "onFacebookError", Toast.LENGTH_LONG);
             }
 
-            @Override
+            //@Override
             public void onError(DialogError e) {
             	Toast.makeText(AnonymousActivity.this, "onError", Toast.LENGTH_LONG);
             	
             }
 
-            @Override
+            //@Override
             public void onCancel() {}
         });
     	

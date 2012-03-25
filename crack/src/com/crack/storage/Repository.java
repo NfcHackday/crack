@@ -116,7 +116,9 @@ public class Repository extends Observable {
 			fos.close();
 			setChanged();
 			notifyObservers();
-		} catch (Exception e) {	}		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
 	}
 	
 	private void saveMe() {
