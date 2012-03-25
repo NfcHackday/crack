@@ -49,13 +49,6 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		
-        if (!authenticated) {
-        	Intent profileScreen = new Intent(this,AnonymousActivity.class);
-        	startActivity(profileScreen);
-        	this.finish();
-        	return;
-        }
-        
         repo = Repository.getInstance(this);  
         // Create some dummy friends
 		for (int i=0; i<20; i++) {
