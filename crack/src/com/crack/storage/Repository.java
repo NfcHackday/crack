@@ -59,14 +59,13 @@ public class Repository extends Observable {
 			}
 		}
 		if (idx==-1) {
-			newFriend.setStaleness(0);
 			friends.add(newFriend);
 		}
 		else {
 			Friend existingFriend = friends.get(idx);
 			existingFriend.setImageUrl(newFriend.getImageUrl());
 			existingFriend.setName(newFriend.getName());
-			existingFriend.setStaleness(0);
+			existingFriend.setStaleness();
 		}
 		save();
 	}
@@ -152,18 +151,6 @@ public class Repository extends Observable {
 			bytes[bi++] = (byte) s.charAt(ci);
 		}
 		return new ObjectInputStream(new ByteArrayInputStream(bytes)).readObject();
-	}
-	
-	/**
-	 * Increases the staleness of all friends by 1.
-	 * 
-	 * Observers are notified.
-	 */
-	public void age() {
-		for (Friend f : getFriends()) {
-			f.setStaleness(f.getStaleness() + 1);
-		}
-		save();
 	}
 	
 	public ArrayList<Friend> getFriends() {

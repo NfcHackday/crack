@@ -54,18 +54,18 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 	
         repo = Repository.getInstance(this);  
         // Create some dummy friends
-		for (int i=0; i<20; i++) {
-			
-			Friend f = new Friend();
-	        f.setStaleness(i);
-	        f.setImageUrl("http://3.bp.blogspot.com/_SYZI7f8KELk/TQoDVn15WbI/AAAAAAAAAAc/xi0qZkqdoh4/s1600/anton.jpg");
-	        f.setName("Anton");
-			f.setEmail("test"+i+"@text.com");
-			repo.addFriend(f);
-			
-			//new DownloadImageTask().execute(f);
-			
-		}
+//		for (int i=0; i<20; i++) {
+//			
+//			Friend f = new Friend();
+//	        f.setStaleness();
+//	        f.setImageUrl("http://3.bp.blogspot.com/_SYZI7f8KELk/TQoDVn15WbI/AAAAAAAAAAc/xi0qZkqdoh4/s1600/anton.jpg");
+//	        f.setName("Anton");
+//			f.setEmail("test"+i+"@text.com");
+//			repo.addFriend(f);
+//			
+//			//new DownloadImageTask().execute(f);
+//			
+//		}
 
         setContentView(R.layout.profile);
         
@@ -208,6 +208,7 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 		
 		try {
 			Friend f = (Friend)Repository.deserialize(message);
+			f.setStaleness();
 			repo.addFriend(f);
 			Toast.makeText(getApplicationContext(), "Friend received: " +  f.getName(), Toast.LENGTH_LONG).show();
 			return;
