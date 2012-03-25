@@ -1,21 +1,31 @@
 package com.crack.nfc;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.nfc.NdefMessage;
 import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcAdapter.OnNdefPushCompleteCallback;
 import android.nfc.NfcEvent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -33,27 +43,28 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 	NfcAdapter mNfcAdapter;
     private static final int MESSAGE_SENT = 1;
     String contactLog = "";
-
-	
+    
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        repo = Repository.getInstance(this);
-        if (!authenticated) {
-        	Intent profileScreen = new Intent(this,AnonymousActivity.class);
-        	startActivity(profileScreen);
-        	this.finish();
-        	return;
-        }
-        
-        for (int i=0; i<10; i++){
-        	Friend f = new Friend();
-        	f.setEmail("anton" + i + "@gmail.com");
-        	f.setName("anton" + i);
-        	f.setImageUrl("http://www.corbijn.co.uk/images/photo_selfim_anton_h_2.jpg");
-        	repo.addFriend(f);
-        }
+	
+        repo = Repository.getInstance(this);  
+        // Create some dummy friends
+		for (int i=0; i<20; i++) {
+			
+			Friend f = new Friend();
+	        f.setStaleness(i);
+	        f.setImageUrl("http://3.bp.blogspot.com/_SYZI7f8KELk/TQoDVn15WbI/AAAAAAAAAAc/xi0qZkqdoh4/s1600/anton.jpg");
+	        f.setName("Anton");
+			f.setEmail("test"+i+"@text.com");
+			repo.addFriend(f);
+			
+			//new DownloadImageTask().execute(f);
+			
+		}
+
+        setContentView(R.layout.profile);
         
         setContentView(R.layout.profile);
     	
@@ -72,7 +83,17 @@ public class CrackActivity extends Activity implements CreateNdefMessageCallback
 		});
         // END temp code
         
-        //mInfoText = (TextView) findViewById(R.id.textView);
+        
+        // Add friends to the list
+        
+       // /ListView list = (ListView) findViewById(R.id.listView1);
+        
+        //ArrayList<Friend> friends = repo.getFriends();
+
+       // list.setAdapter(new ArrayAdapter<Friend>(this, R.layout.list_item, friends));
+        
+        
+        // Setup the NFC stuff
         
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if (mNfcAdapter == null) {
