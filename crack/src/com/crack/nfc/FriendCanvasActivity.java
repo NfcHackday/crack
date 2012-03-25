@@ -99,7 +99,7 @@ public class FriendCanvasActivity extends Activity {
 					Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND);
 					emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[] {touchedFriend.getEmail()});
 					emailIntent.setType("text/plain");
-					startActivity(Intent.createChooser(emailIntent, "It's been too long! Let's meet up on Friday."));
+					startActivity(Intent.createChooser(emailIntent, "It's been too long "+touchedFriend.getName()+"! Let's meet up on Friday."));
 					
 					return false;
 				}
