@@ -34,16 +34,22 @@ public class FriendCanvasActivity extends Activity {
 	private static HashMap<Friend,ImageDrawingData> imageData = new HashMap<Friend, FriendCanvasActivity.ImageDrawingData>();
 	private static ArrayList<Friend> friends;
 	
-	private class ImageDrawingData {
+	public static class ImageDrawingData {
 		
-		private Friend friend;
+		public Friend friend;
 		private Rect r;
 		private Paint p;
 		private Canvas c;
 		private View v;
 	}
 	
-	public class DownloadImageTask extends AsyncTask<ImageDrawingData, Integer, Long> {
+	public static class DownloadImageTask extends AsyncTask<ImageDrawingData, Integer, Long> {
+		
+		private Context c;
+
+		public DownloadImageTask(Context c) {
+			this.c = c;
+		}
 	     
 		 protected Long doInBackground(ImageDrawingData... data) {
 	 	    try {
@@ -54,7 +60,13 @@ public class FriendCanvasActivity extends Activity {
 		        InputStream input = connection.getInputStream();
 		        Bitmap bitmap = BitmapFactory.decodeStream(input);
 		        images.put(data[0].friend, bitmap);
-		        data[0].v.postInvalidate();
+		        
+		        if(data[0].v == null) {
+		        	//MASSIVE HACK:
+		        	Repository.getInstance(c).saveMyImage(bitmap);
+		        } else {
+		        	data[0].v.postInvalidate();
+		        }
 		        Log.d("Done", "Loading image");
 		    } catch (IOException e) {
 		        e.printStackTrace();
@@ -147,7 +159,7 @@ public class FriendCanvasActivity extends Activity {
 						// Remember it's already requested....
 						images.put(f,null);
 						// Download asynch
-						new DownloadImageTask().execute(data);
+						new DownloadImageTask(FriendCanvasActivity.this).execute(data);
 					}
 				} else {
 					// Calculate staleness over 1 hour

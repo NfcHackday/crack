@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.crack.nfc.FriendCanvasActivity.DownloadImageTask;
+import com.crack.nfc.FriendCanvasActivity.ImageDrawingData;
 import com.crack.storage.Friend;
 import com.crack.storage.Repository;
 import com.facebook.android.AsyncFacebookRunner;
@@ -44,8 +46,12 @@ public class AnonymousActivity extends Activity {
         }
         if(facebook.isSessionValid()) {
         	smokeCrack();
-        	if(Repository.getInstance(AnonymousActivity.this).getMe() == null){
+        	Friend me = Repository.getInstance(AnonymousActivity.this).getMe();
+			if(me == null){
         		getUserDetails();
+        	}else{
+        		
+        		getMyImage(me);
         	}
         	finish();
         }
@@ -118,6 +124,7 @@ public class AnonymousActivity extends Activity {
                 me.setImageUrl("http://graph.facebook.com/" + json.getString("id")+ "/picture?type=large");
                 me.setName(json.getString("name"));
                 Repository.getInstance(AnonymousActivity.this).setMe(me);
+                getMyImage(me);
                 Log.d("oren", String.valueOf(me));
                 Log.d("oren", json.toString(2));
             } catch (JSONException e) {
@@ -129,10 +136,16 @@ public class AnonymousActivity extends Activity {
             }
         }
 
+
         public void onFacebookError(FacebookError error) {
             Log.e("oren", "onFacebookError");
         }
 
+    }
+    private void getMyImage(Friend me) {
+    	ImageDrawingData data = new FriendCanvasActivity.ImageDrawingData();
+    	data.friend = me;
+    	new DownloadImageTask(AnonymousActivity.this).execute(data);
     }
     
     

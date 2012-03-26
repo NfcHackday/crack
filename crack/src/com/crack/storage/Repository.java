@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 /**
  * @author Anton
  * 
@@ -22,12 +23,14 @@ public class Repository extends Observable {
 	
 	private Friend me;
 	private String ME_FILENAME = "me.dat";
+	private String MY_IMAGE_FILENAME = "myimage.dat";
 	
 	private ArrayList<Friend> friends;
 	private String FILENAME = "friends.dat";
 	
 	private static Repository instance;
 	private Context context;
+	private Bitmap myImage;
 	
 	public static Repository getInstance(Context context) {
 		if (instance == null)
@@ -39,6 +42,7 @@ public class Repository extends Observable {
 		this.context = context;
 		update();
 		updateMe();
+//		updateMyImage();
 	}
 	
 	/**
@@ -108,6 +112,23 @@ public class Repository extends Observable {
 		}
 	}
 	
+	private void updateMyImage() {
+		try {
+			FileInputStream fis = context.openFileInput(MY_IMAGE_FILENAME);
+			byte[] b = new byte[fis.available()];
+			fis.read(b);
+			String s = new String(b);
+			if ("".equals(s)) {
+				myImage = null;
+			}
+			else {
+				myImage = (Bitmap)deserialize(s);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	private void save() {
 		try {			
 			FileOutputStream fos = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);		
@@ -119,6 +140,20 @@ public class Repository extends Observable {
 			e.printStackTrace();
 		}		
 	}
+	
+	public void saveMyImage(Bitmap bitmap) {
+		myImage = bitmap;
+//		try {			
+//			FileOutputStream fos = context.openFileOutput(MY_IMAGE_FILENAME, Context.MODE_PRIVATE);		
+//			fos.write(serialize(bitmap).getBytes());
+//			fos.close();
+//			setChanged();
+//			notifyObservers();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}		
+	}
+	
 	
 	private void saveMe() {
 		try {			
@@ -155,6 +190,10 @@ public class Repository extends Observable {
 	
 	public ArrayList<Friend> getFriends() {
 		return friends;
+	}
+	
+	public Bitmap getMyImage() {
+		return myImage;
 	}
 	
 	public void setMe(Friend me) {
